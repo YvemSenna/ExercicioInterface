@@ -12,12 +12,13 @@ class RentalService
     public double PricePerHour { get; private set; }
     public double PricePerDay { get; private set; }
 
-    private BrazilTaxService _BrazilTaxService = new BrazilTaxService();
+    private ITaxService _TaxService;
 
-    public RentalService(double pricePerHour, double pricePerDay)
+    public RentalService(double pricePerHour, double pricePerDay, ITaxService itaxservice)
     {
         PricePerHour = pricePerHour;
         PricePerDay = pricePerDay;
+        _TaxService = itaxservice;
     }
     public void ProcessInvoice(CarRental carRental)
     {
@@ -34,7 +35,7 @@ class RentalService
             basicPayment = PricePerDay * Math.Ceiling(duration.TotalDays);
         }
 
-        double tax = _BrazilTaxService.Tax(basicPayment);
+        double tax = _TaxService.Tax(basicPayment);
 
         carRental.Invoice = new Invoice(basicPayment, tax); 
     }
